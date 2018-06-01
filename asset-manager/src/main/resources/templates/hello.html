@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+      
+    <head>
+        <meta charset="UTF-8">
+        <title>Spring Security Example</title>
+    </head>
+    
+    <body>
+    
+        <h2>Hello <span sec:authentication="principal.displayName"></span></h2>
+        
+        <p>Tenant: <span sec:authentication="principal.tenant"></span></p>
+        <p>Username: <span sec:authentication="principal.username"></span></p>
+        <p>Email: <span sec:authentication="principal.email"></span></p>
+        <p>Authorities: <span sec:authentication="principal.authorities"></span></p>
+        <p>Status: <span sec:authentication="principal.status"></span></p>
+        
+        <form th:action="@{/logout}" method="post">
+            <input type="submit" value="Sign Out"/>
+        </form>
+        
+    </body>
+    
+</html>

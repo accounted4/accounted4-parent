@@ -1,0 +1,330 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.accounted4</groupId>
+    <artifactId>accounted4-parent</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <name>accounted4-parent</name>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <java.version>1.8</java.version>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <springboot.version>2.0.2.RELEASE</springboot.version>
+        <dependency.locations.enabled>false</dependency.locations.enabled>
+
+        <toolConfig.dir>${project.basedir}/toolConfig</toolConfig.dir>
+
+        <reports.version>2.9</reports.version>
+        <jxr.version>2.5</jxr.version>
+        <pmd.version>3.9.0</pmd.version>
+        <findbugs.version>3.0.5</findbugs.version>
+        <jacoco.version>0.8.1</jacoco.version>
+        <javadoc.version>3.0.0</javadoc.version>
+        <resources.version>3.1.0</resources.version>
+        <checkstyle.version>3.0.0</checkstyle.version>
+        <surefire.version>2.21.0</surefire.version>
+        <source.version>3.0.1</source.version>
+
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <type>pom</type>
+                <version>${springboot.version}</version>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <modules>
+        <module>db</module>
+        <module>asset-manager</module>
+    </modules>
+
+  <build>
+
+      <plugins>
+
+          <!-- PMD Integration configuration -->
+          <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-jxr-plugin</artifactId>
+              <version>${jxr.version}</version>
+              <executions>
+                  <execution>
+                      <phase>package</phase>
+                      <goals>
+                          <goal>jxr</goal>
+                      </goals>
+                  </execution>
+              </executions>
+          </plugin>
+
+          <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-pmd-plugin</artifactId>
+              <version>${pmd.version}</version>
+              <configuration>
+                  <!-- Run PMD on the tests. Default: false -->
+                  <includeTests>false</includeTests>
+
+                  <!-- Skip the PMD checks. Most useful on the command line via "-Dpmd.skip=true" -->
+                  <skip>false</skip>
+
+                  <!-- Print details of check failures to build output. -->
+                  <verbose>true</verbose>
+
+
+                  <!-- Link the violation line numbers to the source xref. Links will be created
+                  automatically if the jxr plugin is being used. Default: true -->
+                  <linkXRef>true</linkXRef>
+
+                  <!-- Set the output format type, in addition to the HTML report. Must be
+                  one of: "none", "csv", "xml", "txt" or the full class name of the PMD renderer
+                  to use. See the net.sourceforge.pmd.renderers package javadoc for available
+                  renderers. XML is required if the pmd:check goal is being used. Default: xml-->
+                  <format>xml</format>
+
+                  <!-- Fail build if there are high priority warnings during pmd:check. Default value is 5 -->
+                  <failurePriority>1</failurePriority>
+
+                  <!-- A list of files to include from checking. Can contain Ant-style wildcards
+                  and double wildcards. Defaults to **\/*.java.-->
+                  <!--
+                 <includes>
+                      <include>com/accounted4/**/*.java</include>
+                  </includes>-->
+
+                  <!-- A list of files to exclude from checking. Can contain Ant-style wildcards
+                  and double wildcards. We are not excluding anything here. -->
+                  <!-- <excludes>
+                   <exclude></exclude>
+                  </excludes> -->
+
+                  <!-- The output directory for the final HTML report.  -->
+                  <outputDirectory>${project.reporting.outputDirectory}</outputDirectory>
+
+                  <!-- The output directory for the intermediate XML report. -->
+                  <targetDirectory>${project.build.directory}</targetDirectory>
+
+                  <!--
+                  <rulesets>
+                      - Multiple rule set xmls can be included here. -
+                      <ruleset>${basedir}/pmd_ruleset.xml</ruleset>
+                  </rulesets>
+                  -->
+                  <analysisCache>true</analysisCache> <!-- enable incremental analysis -->
+                  <analysisCacheLocation>${project.build.directory}/pmd/pmd.cache</analysisCacheLocation> <!-- Optional: points to this location by default -->
+              </configuration>
+
+              <executions>
+                  <execution>
+                      <phase>package</phase>
+                      <goals>
+                          <!-- Creates a PMD report. -->
+                          <goal>pmd</goal>
+
+                          <!-- Fail the build if there were any PMD violations in the source code. Uncomment if needed -->
+                          <!--<goal>check</goal>-->
+
+                          <!-- Creates a report for PMD's copy paste detector tool -->
+                          <goal>cpd</goal>
+
+                          <!-- Fail the build if there were any CPD violations in the source code. Uncomment if needed -->
+                          <!-- <goal>cpd-check</goal> -->
+                      </goals>
+                  </execution>
+              </executions>
+          </plugin>
+
+          <!-- Java code coverage -->
+          <plugin>
+              <groupId>org.jacoco</groupId>
+              <artifactId>jacoco-maven-plugin</artifactId>
+              <version>${jacoco.version}</version>
+              <configuration>
+                  <!-- Sets the path to the file which contains the execution data. -->
+                  <destFile>${basedir}/target/coverage-reports/jacoco-unit.exec</destFile>
+                  <!-- Sets the path to the file which contains the execution data. -->
+                  <dataFile>${basedir}/target/coverage-reports/jacoco-unit.exec</dataFile>
+                  <!-- Sets the output directory for the code coverage report. -->
+                  <!-- <outputDirectory>${project.reporting.outputDirectory}</outputDirectory> -->
+              </configuration>
+              <executions>
+                  <!--
+                   Prepares the property pointing to the JaCoCo runtime agent which
+                   is passed as VM argument when Maven the Surefire plugin is executed.
+                  -->
+                  <execution>
+                      <id>jacoco-initialize</id>
+                      <goals>
+                          <goal>prepare-agent</goal>
+                      </goals>
+                  </execution>
+                  <execution>
+                      <id>jacoco-site</id>
+                      <phase>package</phase>
+                      <goals>
+                          <goal>report</goal>
+                      </goals>
+                  </execution>
+              </executions>
+          </plugin>
+
+          <!-- JavaDocs configuration
+          <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-resources-plugin</artifactId>
+              <version>${resources.version}</version>
+              <executions>
+                  <execution>
+                      <id>copy static resource files</id>
+                      <phase>generate-sources</phase>
+                      <goals>
+                          <goal>resources</goal>
+                      </goals>
+                  </execution>
+              </executions>
+          </plugin>
+
+                      <plugin>
+                          <groupId>org.apache.maven.plugins</groupId>
+                          <artifactId>maven-javadoc-plugin</artifactId>
+                          <version>${javadoc.version}</version>
+                          <executions>
+                              <execution>
+                                  <id>attach-javadocs</id>
+                                  <goals>
+                                      <goal>jar</goal>
+                                  </goals>
+                              </execution>
+                          </executions>
+                      </plugin>
+            -->
+            <!-- Java sources jar generation
+                      <plugin>
+                          <groupId>org.apache.maven.plugins</groupId>
+                          <artifactId>maven-source-plugin</artifactId>
+                          <version>${source.version}</version>
+                          <executions>
+                              <execution>
+                                  <id>attach-sources</id>
+                                  <goals>
+                                      <goal>jar-no-fork</goal>
+                                  </goals>
+                              </execution>
+                          </executions>
+                      </plugin>
+            -->
+        </plugins>
+    </build>
+
+    <reporting>
+        <plugins>
+
+            <!-- Reporting plugin-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <configuration>
+                    <argLine>-Xmx1024m</argLine>
+                </configuration>
+                <version>${reports.version}</version>
+            </plugin>
+
+            <!-- To publish JUnit test results-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-report-plugin</artifactId>
+                <version>${surefire.version}</version>
+            </plugin>
+
+            <!-- To publish PMD reports-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jxr-plugin</artifactId>
+                <version>${jxr.version}</version>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-pmd-plugin</artifactId>
+                <version>${pmd.version}</version>
+                <configuration>
+                    <includes>
+                        <include>com/**/*.java</include>
+                    </includes>
+                    <outputDirectory>${project.reporting.outputDirectory}</outputDirectory>
+                    <targetDirectory>${project.build.directory}</targetDirectory>
+                    <!--                  <rulesets>
+                        <ruleset>${basedir}/pmd_ruleset.xml</ruleset>
+                    </rulesets>-->
+                </configuration>
+            </plugin>
+
+            <!-- To publish findBugs report-->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>findbugs-maven-plugin</artifactId>
+                <version>${findbugs.version}</version>
+                <configuration>
+                    <debug>true</debug>
+                    <effort>Min</effort>
+                    <threshold>Low</threshold>
+                    <xmlOutput>true</xmlOutput>
+                    <xmlOutputDirectory>${project.reporting.outputDirectory}</xmlOutputDirectory>
+                    <failOnError>true</failOnError>
+                </configuration>
+            </plugin>
+
+            <!-- To publish checkStyle report -->
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>${checkstyle.version}</version>
+                <configuration>
+                    <configLocation>${toolConfig.dir}/checkstyle.xml</configLocation>
+                </configuration>
+            </plugin>
+
+            <!-- To publish Java code coverage-->
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${jacoco.version}</version>
+                <configuration>
+                    <destFile>${basedir}/target/coverage-reports/jacoco-unit.exec</destFile>
+                    <dataFile>${basedir}/target/coverage-reports/jacoco-unit.exec</dataFile>
+                </configuration>
+            </plugin>
+
+            <!-- To publish JavaDocs-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>${javadoc.version}</version>
+                <reportSets>
+                    <reportSet>
+                        <id>default</id>
+                        <reports>
+                            <report>javadoc</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+
+        </plugins>
+
+    </reporting>
+
+</project>
