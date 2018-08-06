@@ -20,5 +20,6 @@ public class UserAppDetails implements Serializable {
     private final String tenant;
     private final String displayName;
     private final String email;
+    private final String organization;
 
 }

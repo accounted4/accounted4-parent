@@ -15,7 +15,8 @@
         <java.version>1.8</java.version>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <springboot.version>2.0.2.RELEASE</springboot.version>
+        <springboot.version>2.0.4.RELEASE</springboot.version>
+        <lombok.version>1.18.2</lombok.version>
         <dependency.locations.enabled>false</dependency.locations.enabled>
 
         <toolConfig.dir>${project.basedir}/toolConfig</toolConfig.dir>
@@ -41,6 +42,12 @@
                 <type>pom</type>
                 <version>${springboot.version}</version>
                 <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
+                <optional>true</optional>
             </dependency>
         </dependencies>
     </dependencyManagement>
