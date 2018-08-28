@@ -29,7 +29,9 @@
         <javadoc.version>3.0.0</javadoc.version>
         <resources.version>3.1.0</resources.version>
         <checkstyle.version>3.0.0</checkstyle.version>
-        <surefire.version>2.21.0</surefire.version>
+        <surefire.version>2.22.0</surefire.version>
+        <junit.platform.version>1.0.0</junit.platform.version>
+        <failsafe.version>2.22</failsafe.version>
         <source.version>3.0.1</source.version>
 
     </properties>

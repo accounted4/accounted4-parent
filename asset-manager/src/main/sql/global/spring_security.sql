@@ -237,7 +237,8 @@ COMMENT ON COLUMN tenant.organization IS 'Name of the group sharing data.';
 CREATE TYPE user_account_status AS ENUM('ACTIVE', 'LOCKED', 'RETIRED');
 
 CREATE TABLE user_app_details(
-    username       VARCHAR(256) NOT NULL PRIMARY KEY
+    pk             bigserial PRIMARY KEY
+   ,username       VARCHAR(256) NOT NULL
    ,status         user_account_status  NOT NULL DEFAULT 'ACTIVE'::user_account_status
    ,tenant         VARCHAR(64)  NOT NULL
    ,display_name   VARCHAR(64)  NOT NULL
@@ -246,6 +247,9 @@ CREATE TABLE user_app_details(
    ,CONSTRAINT user_app_details_username_fk FOREIGN KEY(username) REFERENCES users(username)
    ,CONSTRAINT tenant_tenant_fk FOREIGN KEY(tenant) REFERENCES tenant(tenant)
 )
+;
+
+CREATE UNIQUE INDEX user_app_details_username_uk ON user_app_details(username)
 ;
 
 COMMENT ON TABLE user_app_details IS 'Enhance spring users table with application-specific details.';

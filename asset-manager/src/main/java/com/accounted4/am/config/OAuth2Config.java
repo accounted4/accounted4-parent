@@ -1,10 +1,18 @@
 package com.accounted4.am.config;
 
 import com.accounted4.am.security.EnrichedJdbcUserDetailsManager;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import javax.servlet.Filter;
 import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
@@ -14,6 +22,8 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.A
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
+import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
+import org.springframework.web.cors.CorsConfiguration;
 
 /**
  * Configure the application to act as an oauth2 resource server (requiring a token for each request) and
@@ -56,7 +66,51 @@ public class OAuth2Config extends AuthorizationServerConfigurerAdapter {
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) {
         // Workaround for https://github.com/spring-projects/spring-boot/issues/1801
         endpoints.authenticationManager(authentication -> authenticationManager.getOrBuild().authenticate(authentication));
+        endpoints.getFrameworkEndpointHandlerMapping().setCorsConfigurations(getCorsConfig());
     }
+
+
+    private Map<String, CorsConfiguration> getCorsConfig() {
+
+        Map<String, CorsConfiguration> corsConfigMap = new HashMap<>();
+        corsConfigMap.put("/oauth/token", getOauthEndpointCorsConfig());
+        //corsConfigMap.put("/api", getApiEndpointCorsConfig());
+
+        return corsConfigMap;
+    }
+
+
+    private CorsConfiguration getOauthEndpointCorsConfig() {
+
+        List<String> methods = Stream.of("GET", "POST", "PUT", "DELETE", "OPTIONS").collect(Collectors.toList());
+        List<String> origins = Stream.of("*").collect(Collectors.toList());
+        List<String> headers = Stream.of("Origin", "X-Requested-With", "Content-Type", "Accept", "Authorization").collect(Collectors.toList());
+
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowCredentials(true);
+        config.setAllowedOrigins(origins);
+        config.setAllowedMethods(methods);
+        config.setAllowedHeaders(headers);
+
+        return config;
+
+    }
+
+
+//    private CorsConfiguration getApiEndpointCorsConfig() {
+//
+//        List<String> methods = Stream.of("GET", "POST", "PUT", "DELETE", "OPTIONS").collect(Collectors.toList());
+//        List<String> origins = Stream.of("*").collect(Collectors.toList());
+//        List<String> headers = Stream.of("Authorization").collect(Collectors.toList());
+//
+//        CorsConfiguration config = new CorsConfiguration();
+//        config.setAllowedOrigins(origins);
+//        config.setAllowedMethods(methods);
+//        config.setAllowedHeaders(headers);
+//
+//        return config;
+//
+//    }
 
 
     @Override
@@ -70,12 +124,25 @@ public class OAuth2Config extends AuthorizationServerConfigurerAdapter {
     }
 
 
-    
-    //curl -X POST -vu amClient:password http://localhost:8080/oauth/token -H "Accept: application/json" -d "password=r00table&username=superuser@accounted4.com&grant_type=password&scope=write"
-    //
-    //{"access_token":"a4bc6b84-4420-42cc-945c-0bfec34a7147","token_type":"bearer","refresh_token":"7fa0962b-46c5-4135-b947-6227d47cc999","expires_in":43199,"scope":"write"}
-    //
-    //curl -i -H "Accept: application/json" -H "Authorization: Bearer a4bc6b84-4420-42cc-945c-0bfec34a7147" -X GET http://localhost:8080/useradmin
+    /*
+     * Web browsers send the pre-flight "OPTIONS" message which expects the "Access-Control-Allow-Methods"
+     * response. We don't want to block with a 401 Unauthorized, so put a filter early in the chain to
+     * accept OPTIONS.
+    */
+    @Override
+    public void configure(AuthorizationServerSecurityConfigurer oauthServer) {
+        // Disable /oauth/token Http Basic Auth
+        oauthServer.allowFormAuthenticationForClients();
+    }
+
+
+    // Handle api OPTION pre-flight requests.
+    @Bean
+    @Order(Ordered.HIGHEST_PRECEDENCE)
+    public Filter corsFilter() {
+        return new SimpleCorsFilter();
+    }
+
 
 
 }
