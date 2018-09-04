@@ -137,11 +137,11 @@ public class OAuth2Config extends AuthorizationServerConfigurerAdapter {
 
 
     // Handle api OPTION pre-flight requests.
-    @Bean
-    @Order(Ordered.HIGHEST_PRECEDENCE)
-    public Filter corsFilter() {
-        return new SimpleCorsFilter();
-    }
+//    @Bean
+//    @Order(Ordered.HIGHEST_PRECEDENCE)
+//    public Filter corsFilter() {
+//        return new SimpleCorsFilter();
+//    }
 
 
 
