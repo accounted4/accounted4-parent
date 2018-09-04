@@ -1,5 +1,6 @@
 import axios from 'axios';
 import store from '@/store.js';
+import UserSession from '@/UserSession.js';
 
 
 const TOKEN_URL = 'https://localhost:8443/oauth/token';
@@ -34,40 +35,14 @@ function createOauthRequestBody(username, password) {
 }
 
 
-function getAuthHeader() {
+function getAuthHeader(token) {
     return {
         headers: {
-            'Authorization': 'Bearer ' + store.state.usersession.authToken,
+            'Authorization': 'Bearer ' + token,
             'Content-Type': 'application/json',
             'Accept': 'application/json'
         }
     };
-}
-
-
-function acquireNewToken(username, password) {
-
-    axios.post(TOKEN_URL, createOauthRequestBody(username, password))
-        .then(response => {
-            store.commit('setAuthenticated', response.data.access_token);
-        })
-        .catch((error) => {
-            console.log('error ' + error);
-            store.commit('logout');
-        });
-
-}
-
-
-function userDetails() {
-    axios.get(API_URL + '/useraccount', getAuthHeader())
-        .then(response => {
-            console.log(response);
-            var x = JSON.parse(JSON.stringify(response.data));
-            console.log(x.data);
-            store.commit('setUserDetails', x.data);
-            //store.commit('setAuthenticated', response.data.access_token);
-        });
 }
 
 
@@ -78,19 +53,26 @@ function userDetails() {
 
 const AmService = {
 
-    acquireNewToken: acquireNewToken,
-
-    userDetails: userDetails,
-
     login: function(username, password) {
-        acquireNewToken(username, password);
+        var authToken = '';
+        return axios.post(TOKEN_URL, createOauthRequestBody(username, password))
+            .then(response => {
+                return response.data.access_token;
+            })
+            .then(token => {
+                authToken = token;
+                return axios.get(API_URL + '/useraccount', getAuthHeader(token));
+            })
+            .then(response => {
+                var userDetails = JSON.parse(JSON.stringify(response.data.data));
+                var userSession = UserSession.userSession(authToken, userDetails);
+                return userSession;
+            });
     }
 
-    //    login(username, password) {
-    // if token exists, get rid of it
-    // get token or throw
-    //    }
 };
+
+
 
 
 export default AmService;

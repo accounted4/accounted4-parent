@@ -3,7 +3,7 @@
     <div id="nav">
         <router-link to="/">Home</router-link> |
         <router-link to="/about">About</router-link> |
-        <router-link v-if="this.$store.state.usersession.authenticated" to="/login" v-on:click.native="logout()" replace>Logout {{displayName}}</router-link>
+        <router-link v-if="authenticated" to="/login" v-on:click.native="logout()" replace>Logout {{displayName}}</router-link>
     </div>
     <router-view />
 </div>
@@ -22,8 +22,12 @@ export default {
         }
     },
     computed: {
+        authenticated: function() {
+            return this.$store.state.userSession.authenticated;
+
+        },
         displayName: function() {
-            return this.$store.state.usersession.user.displayName;
+            return this.$store.state.userSession.user.displayName;
         }
     }
 }

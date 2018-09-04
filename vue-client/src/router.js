@@ -59,7 +59,7 @@ function routeRequiresAuthentication(route) {
 
 
 function isAuthenticated() {
-    return store.state.usersession.authenticated;
+    return store.state.userSession.authenticated;
 }
 
 

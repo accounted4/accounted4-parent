@@ -21,10 +21,11 @@
 
 <script>
 import amService from '@/amService.js';
-import { LOGIN } from '@/store.js';
 
 export default {
+
     name: 'Login',
+
     data() {
         return {
             input: {
@@ -33,29 +34,39 @@ export default {
             }
         }
     },
+
     methods: {
         login() {
             //amService.getToken(this.input.username, this.input.password);
             if (this.input.username != "" && this.input.password != "") {
-                amService.login(this.input.username, this.input.password);
+                amService.login(this.input.username, this.input.password)
+                .then(response => {
+                    this.$store.commit('setUserSession', response);
+                })
+                .catch((error) => {
+                    console.log('Login error: ' + error);
+                    this.$store.commit('logout');
+                });
             } else {
                 this.$store.commit('setLoginMsg', "A username and password must be present");
             }
         }
     },
+
     computed: {
         msg() {
-            return this.$store.state.usersession.loginMsg;
+            return this.$store.state.userSession.loginMsg;
         }
     },
+
     watch: {
         'input.username': function(newUsername, oldUsername) {
             if (newUsername != "") {
                 this.$store.commit('setLoginMsg', "");
             }
         }
-
     }
+
 }
 </script>
 
