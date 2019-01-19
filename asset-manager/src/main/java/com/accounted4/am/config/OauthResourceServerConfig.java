@@ -19,7 +19,9 @@ public class OauthResourceServerConfig extends ResourceServerConfigurerAdapter {
         http
                 .authorizeRequests()
                 .antMatchers("/").permitAll()
-                .antMatchers("/api/**").authenticated();
+                .antMatchers("/api/**").authenticated()
+                //.antMatchers("/api/oauthToken/").access("hasRole('ROLE_SUPER_USER')")
+                ;
     }
     
 }

@@ -14,6 +14,7 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.A
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
+import org.springframework.security.oauth2.provider.token.TokenStore;
 
 /**
  * Configure the application to act as an oauth2 authentication server for acquiring tokens.
@@ -27,8 +28,8 @@ public class OAuthAuthorizationServerConfig extends AuthorizationServerConfigure
 
     final AuthenticationManagerBuilder authenticationManager;
 
-    @Autowired
-    private DataSource dataSource;
+    @Autowired private DataSource dataSource;
+    @Autowired private TokenStore tokenStore;
 
 
     public OAuthAuthorizationServerConfig(AuthenticationManagerBuilder authenticationManager) {
@@ -74,6 +75,9 @@ public class OAuthAuthorizationServerConfig extends AuthorizationServerConfigure
         //    "error_description": "Unsupported grant type: password"
         // }        
         endpoints.authenticationManager(authentication -> authenticationManager.getOrBuild().authenticate(authentication));
+        
+        // Similarly, wire in a TokenStore, otherwise Spring Security will create it's own default one.
+        endpoints.tokenStore(tokenStore);
     }
 
 
