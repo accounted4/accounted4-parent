@@ -6,6 +6,9 @@ import java.net.URISyntaxException;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import org.apache.commons.lang3.StringUtils;
+
+
 /**
  * Extract database connection information from a db connect string. The db connect string is
  * expected to be of the form:
@@ -77,7 +80,7 @@ public class PostgresConnectConfig {
                 .append(dbUri.getPath());
 
         String query = dbUri.getQuery();
-        if (null != query && !query.isEmpty()) {
+        if (!StringUtils.isEmpty(query)) {
             dbUrlBuilder.append("?").append(query);
         }
 

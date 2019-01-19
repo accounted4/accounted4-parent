@@ -15,8 +15,8 @@
         <java.version>1.8</java.version>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <springboot.version>2.0.4.RELEASE</springboot.version>
-        <lombok.version>1.18.2</lombok.version>
+        <springboot.version>2.1.1.RELEASE</springboot.version>
+        <lombok.version>1.18.4</lombok.version>
         <dependency.locations.enabled>false</dependency.locations.enabled>
 
         <toolConfig.dir>${project.basedir}/toolConfig</toolConfig.dir>
@@ -25,7 +25,7 @@
         <jxr.version>2.5</jxr.version>
         <pmd.version>3.9.0</pmd.version>
         <findbugs.version>3.0.5</findbugs.version>
-        <jacoco.version>0.8.1</jacoco.version>
+        <jacoco.version>0.8.2</jacoco.version>
         <javadoc.version>3.0.0</javadoc.version>
         <resources.version>3.1.0</resources.version>
         <checkstyle.version>3.0.0</checkstyle.version>

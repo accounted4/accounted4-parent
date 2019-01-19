@@ -34,7 +34,7 @@ public class PostgresConnectConfigTest {
     public final EnvironmentVariables environmentVariables = new EnvironmentVariables();
 
     @Test
-    public void connectConfigPropertisMatchSuppliedDbUrlProperties() throws URISyntaxException, SQLException {
+    public void connectConfigPropertiesMatchSuppliedDbUrlProperties() throws URISyntaxException, SQLException {
         PostgresConnectConfig config = new PostgresConnectConfig(DB_URL);
         assertThat(USER_NAME, is(equalTo(config.getUsername())));
         assertThat(PASSWORD, is(equalTo(config.getPassword())));
@@ -56,7 +56,7 @@ public class PostgresConnectConfigTest {
     }
 
     @Test
-    public void connectConfigPropertisMatchSuppliedDbUrlWithNoQueryProperties() throws URISyntaxException, SQLException {
+    public void connectConfigPropertiesMatchSuppliedDbUrlWithNoQueryProperties() throws URISyntaxException, SQLException {
         PostgresConnectConfig config = new PostgresConnectConfig(DB_URL_WITH_NO_QUERY);
         assertThat(USER_NAME, is(equalTo(config.getUsername())));
         assertThat(PASSWORD, is(equalTo(config.getPassword())));
