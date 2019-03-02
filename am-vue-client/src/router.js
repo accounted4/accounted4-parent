@@ -1,13 +1,18 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import Store from './store.js'
 import Home from './views/Home.vue'
 import Login from './views/Login.vue'
 
 Vue.use(Router)
 
-export default new Router({
+
+const router = new Router({
+
   mode: 'history',
+
   base: process.env.BASE_URL,
+
   routes: [
     {
       path: '/',
@@ -25,7 +30,41 @@ export default new Router({
       // route level code-splitting
       // this generates a separate chunk (about.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
-      component: () => import(/* webpackChunkName: "about" */ './views/About.vue')
+      component: () => import(/* webpackChunkName: "about" */ './views/About.vue'),
+      meta: {
+          requiresAuth: true
+      }
     }
   ]
-})
+
+});
+
+
+export default router;
+
+
+
+function routeRequiresAuthentication(route) {
+    return route.matched.some(record => record.meta.requiresAuth);
+}
+
+
+function isAuthenticated() {
+    return Store.getters.isAuthenticated;
+}
+
+
+// Navigation Guard
+router.beforeEach((to, from, next) => {
+
+    if (routeRequiresAuthentication(to) && !isAuthenticated()) {
+        console.log("Stting")
+        next({
+            path: '/login',
+            query: { redirect: to.fullPath }
+        });
+    } else {
+        next();
+    }
+
+});

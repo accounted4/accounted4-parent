@@ -2,11 +2,43 @@
   <div id="app">
     <div id="nav">
       <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
+      <router-link v-bind:class="{disabled: isDisabled}" to="/about">About</router-link> |
+      <router-link v-show="!isLoggedIn()" to="/login">Login</router-link>
+      <button v-show="isLoggedIn()" @click="handleLogout()">Log In</button>
     </div>
     <router-view/>
   </div>
 </template>
+
+
+<script>
+
+export default {
+
+  name: 'app-nav',
+
+  methods: {
+
+    handleLogout() {
+        this.$store.commit('logout');;
+    },
+
+    isLoggedIn() {
+      return this.$store.getters.isAuthenticated;
+    }
+
+  },
+
+  computed: {
+    isDisabled: function() {
+        return !this.isLoggedIn();
+    }
+  }
+
+};
+
+</script>
+
 
 <style>
 #app {
@@ -28,4 +60,10 @@
 #nav a.router-link-exact-active {
   color: #42b983;
 }
+
+.disabled {
+    pointer-events:none;
+    opacity:0.6;
+}
+
 </style>
