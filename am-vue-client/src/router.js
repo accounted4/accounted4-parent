@@ -1,12 +1,14 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Store from './store.js'
-import Home from './views/Home.vue'
-import Login from './views/Login.vue'
+import Home from '@/views/Home.vue'
+import Login from '@/views/Login.vue'
+import { isLoggedIn } from '@/js/auth.js';
+import { VIEW_NAME_ABOUT, VIEW_NAME_HOME, VIEW_NAME_LOGIN } from '@/js/constants.js';
+
 
 Vue.use(Router)
 
-
+const route_names = {}
 const router = new Router({
 
   mode: 'history',
@@ -16,17 +18,17 @@ const router = new Router({
   routes: [
     {
       path: '/',
-      name: 'home',
+      name: VIEW_NAME_HOME,
       component: Home
     },
     {
       path: '/login',
-      name: 'login',
+      name: VIEW_NAME_LOGIN,
       component: Login
     },
     {
       path: '/about',
-      name: 'about',
+      name: VIEW_NAME_ABOUT,
       // route level code-splitting
       // this generates a separate chunk (about.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
@@ -44,21 +46,19 @@ export default router;
 
 
 
+
 function routeRequiresAuthentication(route) {
     return route.matched.some(record => record.meta.requiresAuth);
 }
 
 
-function isAuthenticated() {
-    return Store.getters.isAuthenticated;
-}
 
 
 // Navigation Guard
 router.beforeEach((to, from, next) => {
 
-    if (routeRequiresAuthentication(to) && !isAuthenticated()) {
-        console.log("Stting")
+    if (routeRequiresAuthentication(to) && !isLoggedIn()) {
+      console.log("guard");
         next({
             path: '/login',
             query: { redirect: to.fullPath }

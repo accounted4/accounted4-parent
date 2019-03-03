@@ -2,9 +2,9 @@
   <div id="app">
     <div id="nav">
       <router-link to="/">Home</router-link> |
-      <router-link v-bind:class="{disabled: isDisabled}" to="/about">About</router-link> |
-      <router-link v-show="!isLoggedIn()" to="/login">Login</router-link>
-      <button v-show="isLoggedIn()" @click="handleLogout()">Log In</button>
+      <router-link v-bind:class="{disabled: !isLoggedIn}" to="/about">About</router-link> |
+      <router-link v-show="!isLoggedIn" to="/login">Login</router-link>
+      <button v-show="isLoggedIn" @click="handleLogout()">Log out</button>
     </div>
     <router-view/>
   </div>
@@ -13,6 +13,10 @@
 
 <script>
 
+import { logout } from '@/js/auth.js';
+import { VIEW_NAME_HOME } from '@/js/constants.js';
+
+
 export default {
 
   name: 'app-nav',
@@ -20,22 +24,22 @@ export default {
   methods: {
 
     handleLogout() {
-        this.$store.commit('logout');;
-    },
-
-    isLoggedIn() {
-      return this.$store.getters.isAuthenticated;
+      logout();
+      this.$router.push({ name: VIEW_NAME_HOME });
     }
 
   },
 
   computed: {
-    isDisabled: function() {
-        return !this.isLoggedIn();
+
+    isLoggedIn() {
+      return this.$store.getters.isAuthenticated;
     }
+
   }
 
-};
+}
+
 
 </script>
 

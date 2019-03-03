@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import UserSession from './js/UserSession.js'
+
+import { STORE_MUTATION_LOGOUT, STORE_MUTATION_SET_USER_SESSION } from '@/js/constants.js';
 
 
 Vue.use(Vuex)
@@ -10,7 +11,7 @@ export default new Vuex.Store({
 
   state: {
 
-    userSession: UserSession.unauthenticatedUserSession(),
+    userSession: null,
 
   },
 
@@ -18,7 +19,7 @@ export default new Vuex.Store({
   getters: {
 
     isAuthenticated: state => {
-      return (state.userSession.isAuthenticated);
+      return (state.userSession !== null);
     }
 
   },
@@ -26,13 +27,12 @@ export default new Vuex.Store({
 
   mutations: {
 
-    setUserSession(state, userSession) {
+    [STORE_MUTATION_SET_USER_SESSION](state, userSession) {
         state.userSession = userSession;
     },
 
-    logout(state) {
-        var emptySession = UserSession.unauthenticatedUserSession();
-        state.userSession = emptySession;
+    [STORE_MUTATION_LOGOUT](state) {
+        state.userSession = null;
     }
 
   },

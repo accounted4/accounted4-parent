@@ -19,39 +19,43 @@
 
 <script>
 
-    export default {
+import { login } from '@/js/auth.js';
+import { VIEW_NAME_ABOUT } from '@/js/constants.js';
 
-        name: 'login',
+export default {
 
-        data () {
-            return {
-                formInline: {
-                    user: '',
-                    password: ''
-                },
-                ruleInline: {
-                    user: [
-                        { required: true, message: 'Please fill in the user name', trigger: 'blur' }
-                    ],
-                    password: [
-                        { required: true, message: 'Please fill in the password.', trigger: 'blur' }
-                    ]
-                }
-            }
-        },
+    name: 'login',
 
-        methods: {
-            handleSubmit(name) {
-                this.$refs[name].validate((valid) => {
-                    if (valid) {
-                        this.$Message.success('Success!');
-                    } else {
-                        this.$Message.error('Authentication Failure');
-                    }
-                })
+    data () {
+        return {
+            formInline: {
+                user: '',
+                password: ''
+            },
+            ruleInline: {
+                user: [
+                    { required: true, message: 'Please fill in the user name', trigger: 'blur' }
+                ],
+                password: [
+                    { required: true, message: 'Please fill in the password.', trigger: 'blur' }
+                ]
             }
         }
+    },
 
+    methods: {
+        handleSubmit(name) {
+            this.$refs[name].validate((valid) => {
+                if (valid) {
+                    login();
+                    this.$router.push({ name: VIEW_NAME_ABOUT });
+                } else {
+                    this.$Message.error('Authentication Failure');
+                }
+            })
+        }
     }
+
+}
 
 </script>
