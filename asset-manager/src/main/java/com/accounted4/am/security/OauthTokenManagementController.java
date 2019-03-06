@@ -39,13 +39,10 @@ public class OauthTokenManagementController {
 
         Collection<OAuth2AccessToken> tokens = tokenStore.findTokensByClientId(clientId);
         
-        if (CollectionUtils.isEmpty(tokens)) {
-            return new RestResponse(Collections.EMPTY_LIST);
-        }
-        
         List<OauthToken> dtoTokens = tokens.stream()
                 .map(t -> new OauthToken(t))
-                .collect(Collectors.toList());
+                .collect(Collectors.toList())
+                ;
         
         return new RestResponse(dtoTokens);
     }

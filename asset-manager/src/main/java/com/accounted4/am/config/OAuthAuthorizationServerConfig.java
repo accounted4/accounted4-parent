@@ -88,6 +88,7 @@ public class OAuthAuthorizationServerConfig extends AuthorizationServerConfigure
                 .secret("{noop}password")
                 .authorizedGrantTypes("password", "authorization_code", "refresh_token")
                 .scopes("read", "write")
+                .accessTokenValiditySeconds(60 * 60 * 12)
                 ;
     }
 
@@ -105,3 +106,4 @@ public class OAuthAuthorizationServerConfig extends AuthorizationServerConfigure
 
 
 }
+
