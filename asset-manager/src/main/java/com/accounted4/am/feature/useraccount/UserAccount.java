@@ -1,5 +1,6 @@
 package com.accounted4.am.feature.useraccount;
 
+import java.util.Set;
 import lombok.Data;
 
 /**
@@ -14,5 +15,6 @@ public class UserAccount {
     private String displayName;
     private String email;
     private String organization;
+    private Set<String> roles;
 
 }

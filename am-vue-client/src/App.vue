@@ -4,7 +4,7 @@
       <router-link to="/">Home</router-link> |
       <router-link v-bind:class="{disabled: !isLoggedIn}" to="/about">About</router-link> |
       <router-link v-show="!isLoggedIn" to="/login">Login</router-link>
-      <button v-show="isLoggedIn" @click="handleLogout()">Log out</button>
+      <Button v-show="isLoggedIn" type="primary" @click="handleLogout()">Log out</Button>
     </div>
     <router-view/>
   </div>

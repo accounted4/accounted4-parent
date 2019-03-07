@@ -11,7 +11,7 @@
             </i-Input>
         </FormItem>
         <FormItem>
-            <Button type="primary" @click="handleSubmit('formInline')">Signin</Button>
+            <Button type="primary" @click="handleSubmit('formInline')">Sign in</Button>
         </FormItem>
     </Form>
 </template>
@@ -44,16 +44,28 @@ export default {
     },
 
     methods: {
+
         handleSubmit(name) {
+
+            var username = this.formInline.user;
+            var password = this.formInline.password;
+
+            var router = this.$router;
+            var onSuccess = function() { router.push({ name: VIEW_NAME_ABOUT }); };
+
+            var msgAlerter = this.$Message;
+            var onFailure = function() { msgAlerter.error('Authentication Failure'); };
+
             this.$refs[name].validate((valid) => {
                 if (valid) {
-                    login();
-                    this.$router.push({ name: VIEW_NAME_ABOUT });
+                    login(username, password, onSuccess, onFailure);
                 } else {
-                    this.$Message.error('Authentication Failure');
+                    this.$Message.error('Form fields are not valid');
                 }
-            })
+            });
+            
         }
+
     }
 
 }
