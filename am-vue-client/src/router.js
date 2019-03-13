@@ -1,9 +1,10 @@
-import Vue from 'vue'
-import Router from 'vue-router'
-import Home from '@/views/Home.vue'
-import Login from '@/views/Login.vue'
+import Vue from 'vue';
+import Router from 'vue-router';
+import Home from '@/views/Home.vue';
+import Login from '@/views/Login.vue';
+import TokenAdmin from '@/views/TokenAdmin.vue';
 import { isLoggedIn } from '@/js/auth.js';
-import { VIEW_NAME_ABOUT, VIEW_NAME_HOME, VIEW_NAME_LOGIN } from '@/js/constants.js';
+import { VIEW_NAME_ABOUT, VIEW_NAME_HOME, VIEW_NAME_LOGIN, VIEW_NAME_TOKEN_ADMIN } from '@/js/constants.js';
 
 
 Vue.use(Router)
@@ -20,6 +21,14 @@ const router = new Router({
       path: '/',
       name: VIEW_NAME_HOME,
       component: Home
+    },
+    {
+      path: '/tokenAdmin',
+      name: VIEW_NAME_TOKEN_ADMIN,
+      component: TokenAdmin,
+      meta: {
+          requiresAuth: true
+      }
     },
     {
       path: '/login',

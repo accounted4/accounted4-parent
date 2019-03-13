@@ -6,7 +6,7 @@
             </i-Input>
         </FormItem>
         <FormItem prop="password">
-            <i-Input type="password" v-model="formInline.password" placeholder="Password">
+            <i-Input @on-enter="handleSubmit('formInline')" type="password" v-model="formInline.password" placeholder="Password">
                 <Icon type="ios-lock-outline" slot="prepend"></Icon>
             </i-Input>
         </FormItem>
@@ -63,8 +63,13 @@ export default {
                     this.$Message.error('Form fields are not valid');
                 }
             });
-            
+
+        },
+
+        onEnter: function() {
+            console.log("Enter key");
         }
+
 
     }
 

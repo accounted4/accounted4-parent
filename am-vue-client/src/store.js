@@ -19,8 +19,13 @@ export default new Vuex.Store({
   getters: {
 
     isAuthenticated: state => {
-      return (state.userSession !== null);
+        return (state.userSession !== null);
+    },
+
+    getUserSession: state => {
+        return state.userSession;
     }
+
 
   },
 

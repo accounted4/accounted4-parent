@@ -2,6 +2,7 @@
   <div id="app">
     <div id="nav">
       <router-link to="/">Home</router-link> |
+      <router-link v-bind:class="{disabled: !isLoggedIn}" to="/tokenAdmin">Token Admin</router-link> |
       <router-link v-bind:class="{disabled: !isLoggedIn}" to="/about">About</router-link> |
       <router-link v-show="!isLoggedIn" to="/login">Login</router-link>
       <Button v-show="isLoggedIn" type="primary" @click="handleLogout()">Log out</Button>
