@@ -1,5 +1,6 @@
 package com.accounted4.am.security;
 
+import static com.accounted4.am.config.CustomTokenEnhancer.ADDITIONAL_INFO_USER_ACCOUNT_KEY;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Set;
@@ -20,9 +21,10 @@ public class OauthToken {
     private boolean expired;
     private String expiration;    
     private String refreshToken;
+    private String userAccount;
 
     
-    OauthToken(OAuth2AccessToken token) {
+    OauthToken(final OAuth2AccessToken token) {
         
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
@@ -32,6 +34,10 @@ public class OauthToken {
         expired = token.isExpired();
         expiration = df.format(token.getExpiration());
         refreshToken = token.getRefreshToken().getValue();
+        userAccount = (String)token
+                .getAdditionalInformation()
+                .getOrDefault(ADDITIONAL_INFO_USER_ACCOUNT_KEY, "unknown")
+                ;
     }
     
 }

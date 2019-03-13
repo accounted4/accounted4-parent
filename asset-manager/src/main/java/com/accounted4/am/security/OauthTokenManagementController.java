@@ -2,14 +2,12 @@ package com.accounted4.am.security;
 
 import com.accounted4.am.common.RestResponse;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.annotation.Resource;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.token.ConsumerTokenServices;
 import org.springframework.security.oauth2.provider.token.TokenStore;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -35,7 +33,7 @@ public class OauthTokenManagementController {
     
     @RequestMapping(method = RequestMethod.GET, value = "/tokens/{clientId}")
     @ResponseBody
-    public RestResponse<List<OauthToken>> getTokens(@PathVariable String clientId) {
+    public RestResponse<List<OauthToken>> getTokens(@PathVariable final String clientId) {
 
         Collection<OAuth2AccessToken> tokens = tokenStore.findTokensByClientId(clientId);
         
@@ -50,7 +48,7 @@ public class OauthTokenManagementController {
 
     @RequestMapping(method = RequestMethod.POST, value = "/tokens/revoke/{tokenId:.+}")
     @ResponseBody
-    public void revokeToken(@PathVariable String tokenId) {
+    public void revokeToken(@PathVariable final String tokenId) {
         tokenServices.revokeToken(tokenId);
     }
 

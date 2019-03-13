@@ -1,10 +1,12 @@
 package com.accounted4.am.config;
 
 import com.accounted4.am.security.EnrichedJdbcUserDetailsManager;
+import java.util.Arrays;
 import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
@@ -14,7 +16,11 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.A
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
+import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
+import org.springframework.security.oauth2.provider.token.TokenEnhancer;
+import org.springframework.security.oauth2.provider.token.TokenEnhancerChain;
 import org.springframework.security.oauth2.provider.token.TokenStore;
+import org.springframework.security.oauth2.provider.token.store.JdbcTokenStore;
 
 /**
  * Configure the application to act as an oauth2 authentication server for acquiring tokens.
@@ -26,17 +32,50 @@ import org.springframework.security.oauth2.provider.token.TokenStore;
 @EnableAuthorizationServer
 public class OAuthAuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
 
-    final AuthenticationManagerBuilder authenticationManager;
+    
+    private final AuthenticationManagerBuilder authenticationManager;
+    private final AssetManagerProperties assetManagerProperties;
+    private final DataSource dataSource;
+    
 
-    @Autowired private DataSource dataSource;
-    @Autowired private TokenStore tokenStore;
-
-
-    public OAuthAuthorizationServerConfig(AuthenticationManagerBuilder authenticationManager) {
+    @Autowired
+    public OAuthAuthorizationServerConfig(
+            final AuthenticationManagerBuilder authenticationManager,
+            final AssetManagerProperties assetManagerProperties,
+            final DataSource dataSource
+            
+    ) {
         this.authenticationManager = authenticationManager;
+        this.assetManagerProperties = assetManagerProperties;
+        this.dataSource = dataSource;
     }
 
 
+    @Bean
+    public TokenStore tokenStore() {
+        // InMemoryTokenStore, JwtTokenStore, custom, ...
+        return new JdbcTokenStore(dataSource);
+    }
+
+    
+    @Bean
+    public TokenEnhancer tokenEnhancer() {
+        return new CustomTokenEnhancer();
+    }
+
+    
+    @Bean
+    @Primary
+    public DefaultTokenServices tokenServices() {
+        DefaultTokenServices defaultTokenServices = new DefaultTokenServices();
+        defaultTokenServices.setTokenStore(tokenStore());
+        defaultTokenServices.setSupportRefreshToken(true);
+        defaultTokenServices.setTokenEnhancer(tokenEnhancer());
+        return defaultTokenServices;
+    }
+
+    
+    
     @Bean
     public PasswordEncoder passwordEncoder() {
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
@@ -62,8 +101,14 @@ public class OAuthAuthorizationServerConfig extends AuthorizationServerConfigure
 //        );        
 //    }
 
+
+
+    
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) {
+        
+        // Wire in a TokenStore, otherwise Spring Security will create it's own default one.
+        endpoints.tokenStore(tokenStore());
         
         // Workaround for https://github.com/spring-projects/spring-boot/issues/1801
         // This is to make sure the authenticationManager is created earlier in the sequence
@@ -76,8 +121,15 @@ public class OAuthAuthorizationServerConfig extends AuthorizationServerConfigure
         // }        
         endpoints.authenticationManager(authentication -> authenticationManager.getOrBuild().authenticate(authentication));
         
-        // Similarly, wire in a TokenStore, otherwise Spring Security will create it's own default one.
-        endpoints.tokenStore(tokenStore);
+        // Required to fulfill oauth2 refresh token requests
+        endpoints.userDetailsService(userDetailsService(dataSource));
+
+        
+        // Enrich the information returned with the oauth token
+        TokenEnhancerChain enhancerChain = new TokenEnhancerChain();
+        enhancerChain.setTokenEnhancers(Arrays.asList(tokenEnhancer()));
+    
+        endpoints.tokenEnhancer(enhancerChain);
     }
 
 
@@ -88,7 +140,7 @@ public class OAuthAuthorizationServerConfig extends AuthorizationServerConfigure
                 .secret("{noop}password")
                 .authorizedGrantTypes("password", "authorization_code", "refresh_token")
                 .scopes("read", "write")
-                .accessTokenValiditySeconds(60 * 60 * 12)
+                .accessTokenValiditySeconds(assetManagerProperties.getOauthTokenLifespanSeconds())
                 ;
     }
 
