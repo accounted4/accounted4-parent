@@ -13,7 +13,12 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-
+/**
+ * Still seem to need this filter in order to allow "OPTIONS" to flow through.
+ * Every Spring upgrade messes up the CORS config.
+ * 
+ * @author glenn
+ */
 @Component
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class SimpleCorsFilter implements Filter {

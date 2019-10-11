@@ -12,24 +12,24 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <java.version>1.8</java.version>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-        <springboot.version>2.1.1.RELEASE</springboot.version>
+        <java.version>11</java.version>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+        <springboot.version>2.1.8.RELEASE</springboot.version>
         <lombok.version>1.18.4</lombok.version>
         <dependency.locations.enabled>false</dependency.locations.enabled>
 
         <toolConfig.dir>${project.basedir}/toolConfig</toolConfig.dir>
 
-        <reports.version>2.9</reports.version>
-        <jxr.version>2.5</jxr.version>
-        <pmd.version>3.9.0</pmd.version>
+        <reports.version>3.0.0</reports.version>
+        <jxr.version>3.0.0</jxr.version>
+        <pmd.version>3.12.0</pmd.version>
         <findbugs.version>3.0.5</findbugs.version>
-        <jacoco.version>0.8.2</jacoco.version>
+        <jacoco.version>0.8.4</jacoco.version>
         <javadoc.version>3.0.0</javadoc.version>
         <resources.version>3.1.0</resources.version>
-        <checkstyle.version>3.0.0</checkstyle.version>
-        <surefire.version>2.22.0</surefire.version>
+        <checkstyle.version>3.1.0</checkstyle.version>
+        <surefire.version>2.22.2</surefire.version>
         <junit.platform.version>1.0.0</junit.platform.version>
         <failsafe.version>2.22</failsafe.version>
         <source.version>3.0.1</source.version>
@@ -62,6 +62,20 @@
   <build>
 
       <plugins>
+
+          
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-site-plugin</artifactId>
+                <version>3.8.2</version>
+            </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-project-info-reports-plugin</artifactId>
+          <version>3.0.0</version>
+        </plugin>
+
 
           <!-- PMD Integration configuration -->
           <plugin>
@@ -269,6 +283,7 @@
                 <artifactId>maven-pmd-plugin</artifactId>
                 <version>${pmd.version}</version>
                 <configuration>
+                    <targetJdk>${java.version}</targetJdk>
                     <includes>
                         <include>com/**/*.java</include>
                     </includes>
@@ -280,21 +295,15 @@
                 </configuration>
             </plugin>
 
+
             <!-- To publish findBugs report-->
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>findbugs-maven-plugin</artifactId>
-                <version>${findbugs.version}</version>
-                <configuration>
-                    <debug>true</debug>
-                    <effort>Min</effort>
-                    <threshold>Low</threshold>
-                    <xmlOutput>true</xmlOutput>
-                    <xmlOutputDirectory>${project.reporting.outputDirectory}</xmlOutputDirectory>
-                    <failOnError>true</failOnError>
-                </configuration>
+                <groupId>com.github.spotbugs</groupId>
+                <artifactId>spotbugs-maven-plugin</artifactId>
+                <version>3.1.12.2</version>
             </plugin>
-
+            
+            
             <!-- To publish checkStyle report -->
 
             <plugin>

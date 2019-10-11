@@ -21,6 +21,9 @@ import org.springframework.security.oauth2.provider.token.TokenEnhancer;
 import org.springframework.security.oauth2.provider.token.TokenEnhancerChain;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JdbcTokenStore;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 
 /**
  * Configure the application to act as an oauth2 authentication server for acquiring tokens.
@@ -48,6 +51,29 @@ public class OAuthAuthorizationServerConfig extends AuthorizationServerConfigure
         this.authenticationManager = authenticationManager;
         this.assetManagerProperties = assetManagerProperties;
         this.dataSource = dataSource;
+    }
+
+
+
+    // Still had to enable SimpleCorsFilter to let OPTIONS flow through
+    // This I needed to add to prevent token retrieval to be stuck by CORS.
+    @Bean
+    public CorsFilter corsFilter() {
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowCredentials(true); // you USUALLY want this
+        config.addAllowedOrigin("*");
+        config.addAllowedHeader("*");
+        config.addAllowedMethod("OPTIONS");
+        config.addAllowedMethod("HEAD");
+        config.addAllowedMethod("GET");
+        config.addAllowedMethod("PUT");
+        config.addAllowedMethod("POST");
+        config.addAllowedMethod("DELETE");
+        config.addAllowedMethod("PATCH");
+        source.registerCorsConfiguration("/**", config);
+        return new CorsFilter(source);
     }
 
 
@@ -89,7 +115,7 @@ public class OAuthAuthorizationServerConfig extends AuthorizationServerConfigure
         //createBootstrapUser(enrichedJdbcUserDetailsManager);
         return enrichedJdbcUserDetailsManager;
     }
-
+    
 //    private void createBootstrapUser(EnrichedJdbcUserDetailsManager jdbcUserDetailsManager) {
 //        jdbcUserDetailsManager.createUser(
 //                User
@@ -132,7 +158,7 @@ public class OAuthAuthorizationServerConfig extends AuthorizationServerConfigure
         endpoints.tokenEnhancer(enhancerChain);
     }
 
-
+    
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
         clients.inMemory()
