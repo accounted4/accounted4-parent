@@ -15,7 +15,6 @@
 <script>
 
 import { logout } from '@/js/auth.js';
-import { VIEW_NAME_HOME } from '@/js/constants.js';
 
 
 export default {
@@ -26,7 +25,7 @@ export default {
 
     handleLogout() {
       logout();
-      this.$router.push({ name: VIEW_NAME_HOME });
+      //this.$router.push({ name: VIEW_NAME_HOME });
     }
 
   },

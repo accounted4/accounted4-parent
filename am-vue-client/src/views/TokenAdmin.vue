@@ -15,9 +15,8 @@
 
 <script>
 
-import axios from 'axios';
-import { APP_API_URL, OAUTH_CLIENT_ID } from '@/js/constants.js';
-import { getTokens } from '@/js/auth.js';
+import { OAUTH_CLIENT_ID } from '@/js/constants.js';
+import { getTokens, revokeToken } from '@/js/tokenManagementService.js';
 
 export default {
 
@@ -44,7 +43,7 @@ export default {
                               },
                               on: {
                                   click: () => {
-                                      console.log(params.index);
+                                      this.revoke(params.index);
                                   }
                               }
                           }, 'Revoke')
@@ -66,12 +65,17 @@ export default {
   methods: {
 
       refreshTokenList: function() {
-          getTokens(OAUTH_CLIENT_ID).then(response => {
-              console.log("Auth get tokens then...");
-              let tokenResponse = response.data;
-              console.log(tokenResponse.data);
-              this.tokens = tokenResponse.data;
+          getTokens(OAUTH_CLIENT_ID).then(restResponse => {
+              this.tokens = restResponse.data;
           });
+      },
+
+      revoke: function(index) {
+          let tokenToRevoke = this.tokens[index].accessToken;
+          revokeToken(tokenToRevoke).then(response => {
+              this.refreshTokenList();
+          });
+
       }
 
   }

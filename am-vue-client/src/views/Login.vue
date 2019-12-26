@@ -47,18 +47,19 @@ export default {
 
         handleSubmit(formName) {
 
-            var username = this.formInline.user;
-            var password = this.formInline.password;
-
-            var router = this.$router;
-            var onSuccess = function() { router.push({ name: VIEW_NAME_ABOUT }); };
-
-            var msgAlerter = this.$Message;
-            var onFailure = function() { msgAlerter.error('Authentication Failure'); };
+            let username = this.formInline.user;
+            let password = this.formInline.password;
 
             this.$refs[formName].validate((valid) => {
                 if (valid) {
-                    login(username, password, onSuccess, onFailure);
+                    login(username, password)
+                        .then(response => {
+                            this.$router.push({ name: VIEW_NAME_ABOUT });
+                        })
+                        .catch(error => {
+                            this.$Message.error('Authentication Failure');
+                        })
+                    ;
                 } else {
                     this.$Message.error('Form fields are not valid');
                 }

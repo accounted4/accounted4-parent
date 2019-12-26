@@ -4,8 +4,7 @@ import Vuex from 'vuex';
 import {
     STORE_MUTATION_INITIALIZE_STORE,
     STORE_MUTATION_LOGOUT,
-    STORE_MUTATION_SET_USER_SESSION,
-    ACCESS_TOKEN_KEY
+    STORE_MUTATION_SET_USER_SESSION
  } from '@/js/constants.js';
 
 

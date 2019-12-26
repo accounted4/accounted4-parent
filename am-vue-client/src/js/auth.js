@@ -1,5 +1,6 @@
 import axios from 'axios';
 import store from '@/store.js';
+import router from '@/router.js';
 
 import {
     STORE_MUTATION_LOGOUT,
@@ -11,7 +12,8 @@ import {
     OAUTH_CLIENT_SECRET,
     OAUTH_SCOPE,
     APP_API_URL,
-    APP_API_TIMEOUT_MS
+    APP_API_TIMEOUT_MS,
+    VIEW_NAME_LOGIN
 } from '@/js/constants.js';
 
 
@@ -138,14 +140,6 @@ function createOauthTokenRefreshRequestBody(refreshToken) {
 // ==========================================================
 
 
-function SessionExpiredException() {
-   this.message = 'Please log';
-   this.toString = function() {
-      return this.message;
-   };
-}
-
-
 /**
  * We are going to pretend that a token expires 2 minutes before the actual expiry
  * so that we can try using the refresh token instead. Then we might be able to
@@ -247,13 +241,12 @@ function getSessionAuthTokenPromise() {
 
 */
 
-// TODO: Don't pass in callbacks, change this to return a Promise
-export function login(username, password, onSuccess, onFailure) {
+export function login(username, password) {
 
     let tokenResponse = '';
 
     // query for oauth token
-    axios.post(
+    return axios.post(
             OAUTH_TOKEN_URL,
             createOauthTokenPasswordRequestBody(username, password),
             { "timeout": APP_API_TIMEOUT_MS }
@@ -272,32 +265,17 @@ export function login(username, password, onSuccess, onFailure) {
             let userDetails = JSON.parse(JSON.stringify(response.data.data));
             let userSession = createUserSessionObject(tokenResponse, userDetails);
             store.commit(STORE_MUTATION_SET_USER_SESSION, userSession);
-            onSuccess();
         })
-
-        .catch(function (error) {
-            console.log(error);
-            onFailure();
-        });
-}
-
-
-
-export function revokeToken(token) {
-
-    axios.get(APP_API_URL + '/oauthToken/tokens/revoke/' + token)
-         .then(response => {
-             console.log(response.data);
-         })
-        .catch(function (error) {
-             console.log(error);
-        });
+    ;
 
 }
+
+
 
 
 export function logout() {
     store.commit(STORE_MUTATION_LOGOUT);
+    router.push({ name: VIEW_NAME_LOGIN })
 }
 
 
@@ -305,21 +283,6 @@ export function isLoggedIn() {
     return store.getters.inSession;
 }
 
-
-export function getTokens(OAUTH_CLIENT_ID) {
-
-    const tokenUrl = APP_API_URL + '/oauthToken/tokens/' + OAUTH_CLIENT_ID;
-
-    let getTokensPromise = axios.get(tokenUrl);
-
-    getTokensPromise.then(response => {
-            let tokenResponse = response.data;
-            return tokenResponse;
-    });
-
-    return getTokensPromise;
-
-}
 
 
 
@@ -339,6 +302,25 @@ axios.interceptors.request.use(
     function (error) {
         console.log("ERROR: " + error);
         return Promise.reject(null);
+    }
+
+);
+
+
+axios.interceptors.response.use(
+
+    function (response) {
+        // Any status code that lie within the range of 2xx cause this function to trigger
+        // Do something with response data
+        return response;
+
+    }, function (error) {
+        // Any status codes that falls outside the range of 2xx cause this function to trigger
+        // Do something with response error
+        if (401 == error.response.status) {
+            logout();
+        }
+        return Promise.reject(error);
     }
 
 );
