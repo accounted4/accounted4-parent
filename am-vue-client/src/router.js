@@ -2,6 +2,7 @@ import Vue from 'vue';
 import Router from 'vue-router';
 import Home from '@/views/Home.vue';
 import Login from '@/views/Login.vue';
+import store from '@/store.js';
 import TokenAdmin from '@/views/TokenAdmin.vue';
 import { isLoggedIn } from '@/js/auth.js';
 import { VIEW_NAME_ABOUT, VIEW_NAME_HOME, VIEW_NAME_LOGIN, VIEW_NAME_TOKEN_ADMIN } from '@/js/constants.js';
@@ -27,7 +28,7 @@ const router = new Router({
       name: VIEW_NAME_TOKEN_ADMIN,
       component: TokenAdmin,
       meta: {
-          requiresAuth: true
+          requiresRole: 'ROLE_ADMIN'
       }
     },
     {
@@ -52,28 +53,3 @@ const router = new Router({
 
 
 export default router;
-
-
-
-
-function routeRequiresAuthentication(route) {
-    return route.matched.some(record => record.meta.requiresAuth);
-}
-
-
-
-
-// Navigation Guard
-router.beforeEach((to, from, next) => {
-
-    if (routeRequiresAuthentication(to) && !isLoggedIn()) {
-      console.log("guard");
-        next({
-            path: '/login',
-            query: { redirect: to.fullPath }
-        });
-    } else {
-        next();
-    }
-
-});

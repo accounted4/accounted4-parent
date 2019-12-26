@@ -5,7 +5,7 @@
       <router-link v-bind:class="{disabled: !isLoggedIn}" to="/tokenAdmin">Token Admin</router-link> |
       <router-link v-bind:class="{disabled: !isLoggedIn}" to="/about">About</router-link> |
       <router-link v-show="!isLoggedIn" to="/login">Login</router-link>
-      <Button v-show="isLoggedIn" type="primary" @click="handleLogout()">Log out</Button>
+      <Button v-show="isLoggedIn" type="text" class="logout" @click="handleLogout()">Log out</Button>
     </div>
     <router-view/>
   </div>
@@ -34,7 +34,7 @@ export default {
   computed: {
 
     isLoggedIn() {
-      return this.$store.getters.isAuthenticated;
+      return this.$store.getters.inSession;
     }
 
   }

@@ -1,3 +1,4 @@
+export const STORE_MUTATION_INITIALIZE_STORE = 'initializeStore';
 export const STORE_MUTATION_LOGOUT = 'logout';
 export const STORE_MUTATION_SET_USER_SESSION = 'setUserSession';
 

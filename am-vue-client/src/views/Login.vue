@@ -1,7 +1,7 @@
 <template>
     <Form ref="formInline" :model="formInline" :rules="ruleInline" inline>
         <FormItem prop="user">
-            <i-Input type="text" v-model="formInline.user" placeholder="Username">
+            <i-Input type="text" v-model="formInline.user" placeholder="Username" autofocus>
                 <Icon type="ios-person-outline" slot="prepend"></Icon>
             </i-Input>
         </FormItem>
@@ -45,7 +45,7 @@ export default {
 
     methods: {
 
-        handleSubmit(name) {
+        handleSubmit(formName) {
 
             var username = this.formInline.user;
             var password = this.formInline.password;
@@ -56,7 +56,7 @@ export default {
             var msgAlerter = this.$Message;
             var onFailure = function() { msgAlerter.error('Authentication Failure'); };
 
-            this.$refs[name].validate((valid) => {
+            this.$refs[formName].validate((valid) => {
                 if (valid) {
                     login(username, password, onSuccess, onFailure);
                 } else {
@@ -64,10 +64,6 @@ export default {
                 }
             });
 
-        },
-
-        onEnter: function() {
-            console.log("Enter key");
         }
 
 

@@ -21,9 +21,9 @@ import org.springframework.security.oauth2.provider.token.TokenEnhancer;
 import org.springframework.security.oauth2.provider.token.TokenEnhancerChain;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JdbcTokenStore;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.CorsFilter;
+//import org.springframework.web.cors.CorsConfiguration;
+//import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+//import org.springframework.web.filter.CorsFilter;
 
 /**
  * Configure the application to act as an oauth2 authentication server for acquiring tokens.
@@ -56,25 +56,25 @@ public class OAuthAuthorizationServerConfig extends AuthorizationServerConfigure
 
 
     // Still had to enable SimpleCorsFilter to let OPTIONS flow through
-    // This I needed to add to prevent token retrieval to be stuck by CORS.
-    @Bean
-    public CorsFilter corsFilter() {
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        CorsConfiguration config = new CorsConfiguration();
-        config.setAllowCredentials(true); // you USUALLY want this
-        config.addAllowedOrigin("*");
-        config.addAllowedHeader("*");
-        config.addAllowedMethod("OPTIONS");
-        config.addAllowedMethod("HEAD");
-        config.addAllowedMethod("GET");
-        config.addAllowedMethod("PUT");
-        config.addAllowedMethod("POST");
-        config.addAllowedMethod("DELETE");
-        config.addAllowedMethod("PATCH");
-        source.registerCorsConfiguration("/**", config);
-        return new CorsFilter(source);
-    }
+    // Below is how it -should- be configured, but still get stuck by CORS.
+//    @Bean
+//    public CorsFilter corsFilter() {
+//
+//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//        CorsConfiguration config = new CorsConfiguration();
+//        config.setAllowCredentials(true); // you USUALLY want this
+//        config.addAllowedOrigin("*");
+//        config.addAllowedHeader("*");
+//        config.addAllowedMethod("OPTIONS");
+//        config.addAllowedMethod("HEAD");
+//        config.addAllowedMethod("GET");
+//        config.addAllowedMethod("PUT");
+//        config.addAllowedMethod("POST");
+//        config.addAllowedMethod("DELETE");
+//        config.addAllowedMethod("PATCH");
+//        source.registerCorsConfiguration("/**", config);
+//        return new CorsFilter(source);
+//    }
 
 
     @Bean

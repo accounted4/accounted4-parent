@@ -1,14 +1,15 @@
 <template>
-  <div class="about">
-    <h1>Token Admin</h1>
-    <div id="app-4">
-      <ul>
-        <li v-for="token in tokens">
-          {{ token.accessToken }}
-        </li>
-    </ul>
+
+  <div>
+
+    <h1 id='heading'>Token Admin</h1>
+
+    <div>
+        <Table :columns="tableColumns" :data="tokens"></Table>
     </div>
+
   </div>
+
 </template>
 
 
@@ -16,6 +17,7 @@
 
 import axios from 'axios';
 import { APP_API_URL, OAUTH_CLIENT_ID } from '@/js/constants.js';
+import { getTokens } from '@/js/auth.js';
 
 export default {
 
@@ -23,6 +25,34 @@ export default {
 
   data () {
       return {
+          tableColumns: [
+              {title: 'User Account', key: 'userAccount'},
+              {title: 'Access Token', key: 'accessToken'},
+              {title: 'Refresh Token', key: 'refreshToken'},
+              {title: 'Expiry Time', key: 'expiration'},
+              {
+                  title: 'Action',
+                  key: 'action',
+                  width: 150,
+                  align: 'center',
+                  render: (h, params) => {
+                      return h('div', [
+                          h('Button', {
+                              props: {
+                                  type: 'error',
+                                  size: 'small'
+                              },
+                              on: {
+                                  click: () => {
+                                      console.log(params.index);
+                                  }
+                              }
+                          }, 'Revoke')
+                      ]);
+                  }
+              }
+
+          ],
           tokens: []
       }
   },
@@ -36,17 +66,12 @@ export default {
   methods: {
 
       refreshTokenList: function() {
-          console.log("Refreshing token list");
-          axios.get(APP_API_URL + '/oauthToken/tokens/' + OAUTH_CLIENT_ID)
-
-          .then(response => {
-              this.tokens = response.data.data;
-          })
-
-          .catch(error => {
-              console.log(error);
+          getTokens(OAUTH_CLIENT_ID).then(response => {
+              console.log("Auth get tokens then...");
+              let tokenResponse = response.data;
+              console.log(tokenResponse.data);
+              this.tokens = tokenResponse.data;
           });
-
       }
 
   }
@@ -55,3 +80,12 @@ export default {
 }
 
 </script>
+
+
+<style>
+
+#heading {
+  padding: 30px;
+}
+
+</style>
