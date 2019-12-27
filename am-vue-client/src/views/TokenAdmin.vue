@@ -28,11 +28,11 @@ export default {
               {title: 'User Account', key: 'userAccount'},
               {title: 'Access Token', key: 'accessToken'},
               {title: 'Refresh Token', key: 'refreshToken'},
-              {title: 'Expiry Time', key: 'expiration'},
+              {title: 'Expiry Time', key: 'expiration', width: 200},
               {
                   title: 'Action',
                   key: 'action',
-                  width: 150,
+                  width: 100,
                   align: 'center',
                   render: (h, params) => {
                       return h('div', [
