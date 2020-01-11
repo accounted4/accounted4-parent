@@ -1,19 +1,21 @@
-<template>
+<template >
+    <div  class="center-container">
     <Form ref="formInline" :model="formInline" :rules="ruleInline" inline>
         <FormItem prop="user">
-            <i-Input type="text" v-model="formInline.user" placeholder="Username" autofocus>
+            <Input type="text" v-model="formInline.user" placeholder="Username" autofocus>
                 <Icon type="ios-person-outline" slot="prepend"></Icon>
-            </i-Input>
+            </Input>
         </FormItem>
         <FormItem prop="password">
-            <i-Input @on-enter="handleSubmit('formInline')" type="password" v-model="formInline.password" placeholder="Password">
+            <Input @on-enter="handleSubmit('formInline')" type="password" v-model="formInline.password" placeholder="Password">
                 <Icon type="ios-lock-outline" slot="prepend"></Icon>
-            </i-Input>
+            </Input>
         </FormItem>
         <FormItem>
             <Button type="primary" @click="handleSubmit('formInline')">Sign in</Button>
         </FormItem>
     </Form>
+    </div>
 </template>
 
 
@@ -73,3 +75,17 @@ export default {
 }
 
 </script>
+
+
+<style scoped>
+
+    .center-container {
+        position: absolute;
+        margin: 0;
+        top: 50%;
+        left: 50%;
+        margin-right: -50%;
+        transform: translate(-50%, -50%)
+    }
+
+</style>
