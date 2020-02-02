@@ -9,7 +9,7 @@ import org.springframework.data.solr.repository.SolrCrudRepository;
  * 
  * @author glenn
  */
-public interface InstrumentSolrDocRepository  extends SolrCrudRepository<InstrumentSolrDoc, String> {
+public interface InstrumentSolrDocRepository extends SolrCrudRepository<InstrumentSolrDoc, String> {
 
     List<InstrumentSolrDoc> findTop10BySymbolOrSymbolStartingWithOrDescrContainsOrderByScoreDescSymbolAsc(
             @Boost(3)String symbolExact,

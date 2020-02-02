@@ -23,6 +23,23 @@
               <router-link to="/about">about</router-link>
             </MenuItem>
 
+            <Submenu name="securities">
+              <template slot="title">
+                <Icon type="md-analytics" />
+                Stocks
+              </template>
+              <MenuGroup title="Portfolios">
+                <MenuItem name="portfolio">
+                  <router-link to="/portfolio">Portfolio</router-link>
+                </MenuItem>
+              </MenuGroup>
+              <MenuGroup title="Markets">
+                <MenuItem name="debentures">
+                  <router-link to="/finsec/debentures">Debentures</router-link>
+                </MenuItem>
+              </MenuGroup>
+            </Submenu>
+
             <Submenu name="admin">
               <template slot="title">
                 <Icon type="ios-construct" />

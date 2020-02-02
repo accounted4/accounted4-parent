@@ -2,8 +2,10 @@ package com.accounted4.am.feature.finsec;
 
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -16,14 +18,18 @@ import org.springframework.web.bind.annotation.RestController;
 public class FinSecController {
 
     @Autowired
-    private InstrumentSolrDocRepository instrumentRepository;
+    private InstrumentSolrDocRepository instrumentSolrDocRepo;
 
-    @RequestMapping(method = RequestMethod.GET, value = "/findBySymbol")
+    @Autowired
+    private DebentureRepository debentureRepo;
+    
+    
+    @GetMapping(value = "/findBySymbol")
     public List<InstrumentSolrDoc> findBySymbol(@RequestParam final String searchTerm) {
         
         String leadWord = searchTerm.trim().split(" ")[0].toUpperCase();
         
-        return instrumentRepository
+        return instrumentSolrDocRepo
                 .findTop10BySymbolOrSymbolStartingWithOrDescrContainsOrderByScoreDescSymbolAsc(
                         leadWord,
                         leadWord,
@@ -32,5 +38,12 @@ public class FinSecController {
         
     }
     
+    
+    
+    @GetMapping(value = "/debentures")
+    public Page<DebentureEntity> getDebentures(Pageable pageRequest) {
+        return debentureRepo.findAll(pageRequest);
+    }
+
 
 }

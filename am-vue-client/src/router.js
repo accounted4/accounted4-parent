@@ -2,10 +2,13 @@ import Vue from 'vue';
 import Router from 'vue-router';
 import Home from '@/views/Home.vue';
 import Login from '@/views/Login.vue';
+import FinSecDebentures from "@/views/FinSecDebentures";
 import store from '@/store.js';
 import TokenAdmin from '@/views/TokenAdmin.vue';
 import { isLoggedIn } from '@/js/auth.js';
-import { VIEW_NAME_ABOUT, VIEW_NAME_HOME, VIEW_NAME_LOGIN, VIEW_NAME_TOKEN_ADMIN } from '@/js/constants.js';
+import { VIEW_NAME_ABOUT, VIEW_NAME_HOME, VIEW_NAME_LOGIN, VIEW_NAME_TOKEN_ADMIN
+        ,VIEW_NAME_FINSEC_DEBENTURES
+       } from '@/js/constants.js';
 
 
 Vue.use(Router)
@@ -35,6 +38,10 @@ const router = new Router({
       path: '/login',
       name: VIEW_NAME_LOGIN,
       component: Login
+    },
+    {
+      path: '/finsec/debentures',
+      component: FinSecDebentures
     },
     {
       path: '/about',

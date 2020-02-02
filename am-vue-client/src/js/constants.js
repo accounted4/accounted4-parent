@@ -6,6 +6,7 @@ export const VIEW_NAME_LOGIN = 'login';
 export const VIEW_NAME_ABOUT = 'about';
 export const VIEW_NAME_HOME = 'home';
 export const VIEW_NAME_TOKEN_ADMIN = 'tokenAdmin';
+export const VIEW_NAME_FINSEC_DEBENTURES = 'finSecDebentures';
 
 
 export const OAUTH_TOKEN_URL = 'https://localhost:8443/oauth/token';

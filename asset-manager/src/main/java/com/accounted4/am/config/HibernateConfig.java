@@ -28,6 +28,7 @@ import java.util.function.Supplier;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.security.core.context.SecurityContext;
 
 
 /**
@@ -114,7 +115,16 @@ public class HibernateConfig {
 
     private String getTenantFromSession() {
         // Because of AnonymousAuthenticationFilter, there will always be a Principal
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        // Except during startup where SpringDataWebSupport uses a connection while
+        // creating repository entities
+        SecurityContext context = SecurityContextHolder.getContext();
+        if (null == context) {
+            return env.getProperty(GLOBAL_SCHEMA_KEY);
+        }
+        Authentication authentication = context.getAuthentication();
+        if (null == authentication) {
+            return env.getProperty(GLOBAL_SCHEMA_KEY);
+        }
         Object principal = authentication.getPrincipal();
         if (principal.equals(ANONYMOUS_USER)) {
             return env.getProperty(GLOBAL_SCHEMA_KEY);
@@ -123,7 +133,7 @@ public class HibernateConfig {
     }
 
 
-    @Bean
+    @Bean(name = "multiTenantEntityManager")
     public LocalContainerEntityManagerFactoryBean entityManagerFactory() throws URISyntaxException {
 
         LocalContainerEntityManagerFactoryBean emfBean = new LocalContainerEntityManagerFactoryBean();
