@@ -153,7 +153,7 @@ BEGIN
 
     -- Copy end of day quotes
     INSERT INTO sm_eod_quote(instrument_id, read_dte, close_price, volume_traded)
-      SELECT s.id, v_dte, e.close_price::numeric, to_number(e.volume_traded, '999G999G999')
+      SELECT s.id, v_dte, to_number(e.close_price,'999G999D99'), to_number(e.volume_traded, '999G999G999')
         FROM sm_eod_quotes_staging e
         JOIN sm_instrument s ON (s.exchange_id = v_exchange_id AND s.symbol = e.symbol)
         ORDER BY e.symbol
