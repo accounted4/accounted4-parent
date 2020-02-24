@@ -4,7 +4,7 @@
 
     <Layout>
 
-      <Header>
+      <Header :style="{position: 'fixed', width: '100%', zIndex: '10'}">
         <Menu mode="horizontal" theme="dark" active-name="1" @on-select="menuHandler">
 
           <div class="layout-logo">
@@ -69,14 +69,14 @@
         </Menu>
       </Header>
 
-      <Content :style="{padding: '0 19px'}">
+      <Content  :style="{margin: '88px 20px 0', background: '#fff', minHeight: '500px'}">
 <!--        <Breadcrumb :style="{margin: '20px 0'}">-->
 <!--          <BreadcrumbItem v-model="path"></BreadcrumbItem>-->
 <!--          <BreadcrumbItem>Components</BreadcrumbItem>-->
 <!--          <BreadcrumbItem>Layout</BreadcrumbItem>-->
 <!--        </Breadcrumb>-->
         <Card>
-          <div style="min-height: 200px;">
+          <div>
             <router-view/>
           </div>
         </Card>
@@ -184,7 +184,7 @@ export default {
 
 .layout-nav{
   display: flex;
-  justify-content: flex-end
+  justify-content: flex-end;
 }
 
 .layout-footer-right{

@@ -41,7 +41,11 @@ const router = new Router({
     },
     {
       path: '/finsec/debentures',
-      component: FinSecDebentures
+      name: VIEW_NAME_FINSEC_DEBENTURES,
+      component: FinSecDebentures,
+      meta: {
+        requiresAuth: true
+      }
     },
     {
       path: '/about',
@@ -55,6 +59,28 @@ const router = new Router({
       }
     }
   ]
+
+});
+
+
+router.beforeEach((to, from, next) => {
+
+  if (to.matched.some(record => record.meta.requiresAuth)) {
+
+    // this route requires auth, check if logged in
+    // if not, redirect to login page.
+    if (!isLoggedIn()) {
+      next({
+        path: '/login',
+        query: { redirect: to.fullPath }
+      });
+    } else {
+      next();
+    }
+
+  } else {
+    next(); // make sure to always call next()!
+  }
 
 });
 

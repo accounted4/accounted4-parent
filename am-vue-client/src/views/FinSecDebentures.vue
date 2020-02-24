@@ -5,7 +5,19 @@
     <h1 id='heading'>Debentures</h1>
 
     <div>
-        <Table :columns="tableColumns" :data="debentures"></Table>
+        <Table
+                :columns="tableColumns"
+                :data="debentures"
+                :no-data-text="noDataMsg"
+                :loading="loading"
+                :height="600"
+        >
+            <template slot-scope="{ row, index }" slot="flag">
+                <Tooltip max-width="300" :content="row.comments">
+                    <Badge :status="row.flag" />
+                </Tooltip>
+            </template>
+        </Table>
     </div>
 
   </div>
@@ -16,6 +28,7 @@
 <script>
 
 import { getDebenturePage } from '@/js/finSecService.js';
+import expandRow from './FinSecDebenturesTableSubRow.vue';
 
 export default {
 
@@ -24,23 +37,100 @@ export default {
   data () {
       return {
           tableColumns: [
-              {title: 'Symbol',         key: 'symbol'},
-              {title: 'Description',    key: 'descr'},
-              {title: 'Issued',         key: 'issueDte'},
-              {title: 'Maturity',       key: 'maturityDte'},
-              {title: 'Rate',           key: 'percentage'},
-              {title: 'Effective Rate', key: 'effectiveRate'},
-              {title: 'Close',          key: 'closePrice'},
-              {title: 'Volume',         key: 'volumeTraded'},
-              {title: 'Read Date',      key: 'readDte'},
-              {title: 'Underlying Symbol', key: 'underlyingSymbol'},
-              {title: 'Underlying Close',  key: 'underlyingClosePrice'},
-              {title: 'Underlying Date',   key: 'underlyingReadDte'},
-              {title: 'Conversion Price',  key: 'conversionPrice'},
-              {title: 'Conversion Rate',   key: 'conversionRate'},
-              {title: 'Converted',         key: 'converted'},
-              {title: 'Prospectus',        key: 'prospectus'},
-              {title: 'Comments',         key: 'comments'}
+
+              // {
+              //     type: 'index',
+              //     width: 60,
+              //     align: 'center'
+              // },
+
+              {
+                type: 'expand',
+                width: 50,
+                render: (h, params) => {
+                  return h(expandRow, {
+                    props: {
+                      row: params.row
+                    }
+                  })
+                }
+              },
+
+
+              {title: 'Symbol',  key: 'symbol', width: '120', sortable: true},
+              {title: "", slot: 'flag', width: '10'},
+              {title: 'Description', key: 'descr', width: '350', sortable: true, resizable: "true" },
+              // {title: 'Issued', key: 'issueDte'},
+              {title: 'Maturity', key: 'maturityDte', sortable: true, width: '120'},
+              //{title: 'Rate',           key: 'percentage'},
+              {title: 'Eff Rate %', key: 'effectiveRate', width: '150', sortable: true, align: 'right',
+                  filters: [
+                      {
+                          label: '< 2%',
+                          value: 1
+                      },
+                      {
+                          label: '>= 2% AND <=10%',
+                          value: 2
+                      },
+                      {
+                          label: '> 10%',
+                          value: 3
+                      }
+                  ],
+                  filterMethod (value, row) {
+                      if (value === 1) {
+                          return row.effectiveRate < 2;
+                      } else if (value === 2) {
+                          return row.effectiveRate >= 2 && row.effectiveRate <= 10;
+                      } else if (value === 3) {
+                          return row.effectiveRate > 10;
+                      }
+                      return false;
+                  },
+                  render: (h, params) => {
+                      return h('span', null != params.row.effectiveRate ? params.row.effectiveRate.toFixed(3) : null);
+                  }
+
+
+              },
+              {title: 'Close $',          key: 'closePrice', width: '130', sortable: true, align: 'right',
+                  filters: [
+                      {
+                          label: '< $80',
+                          value: 80
+                      },
+                      {
+                          label: '>= $80 AND <= $105',
+                          value: 100
+                      },
+                      {
+                          label: '> $105',
+                          value: 105
+                      }
+                  ],
+                  filterMethod (value, row) {
+                      if (value === 80) {
+                          return row.closePrice < 80;
+                      } else if (value === 100) {
+                          return row.closePrice >= 80 && row.closePrice <= 105;
+                      } else if (value === 105) {
+                          return row.closePrice > 105;
+                      }
+                      return false;
+                  },
+
+                  render: (h, params) => {
+                    return h('span', params.row.closePrice.toFixed(2));
+                  }
+
+              },
+              {title: 'Volume',         key: 'volumeTraded', width: '120', align: 'right',
+                  render: (h, params) => {
+                      return h('span', params.row.volumeTraded.toLocaleString());
+                  }
+              },
+              {title: 'Read Date',      key: 'readDte', width: '120'}
 
               // {
               //     title: 'Action',
@@ -65,7 +155,9 @@ export default {
               // }
 
           ],
-          debentures: []
+          debentures: [],
+          noDataMsg: "No Data",
+          loading: false
       }
   },
 
@@ -79,7 +171,10 @@ export default {
 
     getDebentures: function() {
       getDebenturePage(200, 0).then(restResponse => {
+              this.loading = true;
               this.debentures = restResponse.content;
+              this.debentures[1].flag="error";
+              this.loading = false;
           });
       }
 
