@@ -57,10 +57,30 @@
             </Col>
         </Row>
 
-        <Row>
+        <Row class="expand-row">
             <Col>
                 <p>{{ row.comments }}</p>
             </Col>
+        </Row>
+
+        <Row>
+            <Col span="8">
+                <sparkline>
+                    <sparklineLine :data="closePrice" :limit="closePrice.length" :styles="spLineStyles1" />
+                </sparkline>
+            </Col>
+
+            <Col span="8">
+                <sparkline>
+                    <sparklineBar
+                            :data="volumeTraded"
+                            :margin="spMargin4"
+                            :limit="volumeTraded.length"
+                            :styles="volumeBarStyle"
+                            :refLineStyles="spRefLineStyles4" />
+                </sparkline>
+            </Col>
+
         </Row>
 
     </div>
@@ -70,6 +90,10 @@
 
 <script>
 
+    import {getQuoteHistory} from "@/js/finSecService";
+    // http://www.7te.net/zp-ui/#/sparkline
+
+
     export default {
 
         props: {
@@ -78,8 +102,46 @@
 
         data() {
             return {
-                path: "Hello"
+                closePrice: [],
+                spIndicatorStyles1: false,
+                spLineStyles1: {
+                    stroke: '#54a5ff'
+                },
+
+                volumeTraded: [],
+                spMargin4: 2,
+                volumeBarStyle: {
+                    fill: '#54a5ff'
+                },
+                spLineStyles4: {
+                    stroke: '#d14'
+                },
+                spRefLineStyles4: {
+                    stroke: '#d14',
+                    strokeOpacity: 1,
+                    strokeDasharray: '3, 3'
+                }
+
             }
+        },
+
+        mounted: function() {
+            this.getQuoteHistory(this.row.instrumentId);
+        },
+
+
+        methods: {
+
+            getQuoteHistory: function (instrumentId) {
+                getQuoteHistory(instrumentId).then(restResponse => {
+                    this.loading = true;
+                    this.closePrice = restResponse.map(q => q.closePrice);
+                    this.volumeTraded = restResponse.map(q => q.volumeTraded);
+                    this.loading = false;
+                });
+
+            }
+
         }
 
     };

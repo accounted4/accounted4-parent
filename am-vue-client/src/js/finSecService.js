@@ -18,5 +18,17 @@ export function getDebenturePage(size, page) {
             return axiosResponse.data;
         });
 
+}
+
+
+export function getQuoteHistory(instrumentId) {
+
+    const getQuoteHistoryUrl = APP_API_URL + '/finsec/quotes/' + instrumentId;
+
+    return axios.get(getQuoteHistoryUrl)
+
+        .then(axiosResponse => {
+            return axiosResponse.data;
+        });
 
 }
